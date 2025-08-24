@@ -1,21 +1,19 @@
-apply plugin: "com.android.application"
-apply plugin: "org.jetbrains.kotlin.android"
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
 
 def enableProguardInReleaseBuilds = false
-def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
-
-// Default Hermes flag fallback
-def enableHermes = project.hasProperty("hermesEnabled") ? hermesEnabled.toBoolean() : true
 
 android {
     namespace "com.aviatorscanner"
+    compileSdk rootProject.ext.compileSdkVersion
     ndkVersion rootProject.ext.ndkVersion
-    compileSdk rootProject.ext.compileSdkVersion  // ✅ Changed to compileSdk (without "Version")
 
     defaultConfig {
         applicationId "com.aviatorscanner"
-        minSdk rootProject.ext.minSdkVersion  // ✅ Changed to minSdk (without "Version")
-        targetSdk rootProject.ext.targetSdkVersion  // ✅ Changed to targetSdk (without "Version")
+        minSdk rootProject.ext.minSdkVersion
+        targetSdk rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
     }
@@ -36,7 +34,7 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        release {  // ✅ Added proper release signing config
+        release {
             if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
                 storeFile file(MYAPP_UPLOAD_STORE_FILE)
                 storePassword MYAPP_UPLOAD_STORE_PASSWORD
@@ -51,7 +49,7 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            signingConfig signingConfigs.release  // ✅ Now uses your real release keystore
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             shrinkResources false
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
@@ -64,12 +62,6 @@ android {
 }
 
 dependencies {
-    implementation("com.facebook.react:react-android")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${rootProject.ext.kotlinVersion}"
-
-    if (enableHermes) {
-        implementation("com.facebook.react:hermes-android")
-    } else {
-        implementation jscFlavor
-    }
+    // other native dependencies, e.g., play-services, etc.
 }
